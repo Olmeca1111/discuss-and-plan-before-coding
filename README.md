@@ -70,7 +70,11 @@ Enable it once per clone:
 git config core.hooksPath hooks
 ```
 
-After that, any `git commit` that adds a matching line is blocked with the offending lines printed out, so you can fix them before they ever reach `git push`. It's a pattern scanner, not a guarantee — it won't catch, say, a real client name typed as plain prose with no surrounding marker. If you hit a false positive, bypass that one commit with:
+After that, any `git commit` that adds a matching line is blocked with the offending lines printed out, so you can fix them before they ever reach `git push`. It's a pattern scanner, not a guarantee — it won't catch, say, a real client name typed as plain prose with no surrounding marker.
+
+**Optional second layer.** If you have [gitleaks](https://github.com/gitleaks/gitleaks) installed and on your `PATH`, the hook automatically also runs `gitleaks protect --staged` against the same diff, which covers a much broader set of token formats (GitHub, Slack, Stripe, GCP, generic high-entropy secrets, etc.) than the hand-written patterns above. This is entirely optional — gitleaks is not a required dependency, and the hook works fine without it, just with narrower coverage.
+
+If you hit a false positive, bypass that one commit with:
 
 ```sh
 ALLOW_PERSONAL_DATA=1 git commit ...

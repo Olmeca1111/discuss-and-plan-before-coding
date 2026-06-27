@@ -60,6 +60,21 @@ if [ -n "$seen_on_lines" ]; then
     fi
 fi
 
+# Optional second layer: if gitleaks is installed, also run its built-in
+# ruleset (GitHub/Slack/Stripe/GCP tokens, high-entropy secrets, etc.) against
+# the staged changes. Skipped silently if gitleaks isn't on PATH — it's not a
+# required dependency, just a stronger check for people who have it.
+if command -v gitleaks >/dev/null 2>&1; then
+    gitleaks_output=$(gitleaks protect --staged --no-banner -v 2>&1)
+    gitleaks_status=$?
+    if [ "$gitleaks_status" -ne 0 ]; then
+        found=1
+        echo "pre-commit: gitleaks found possible secrets in staged changes:"
+        echo "$gitleaks_output" | sed 's/^/  /'
+        echo
+    fi
+fi
+
 if [ "$found" -eq 1 ]; then
     echo "pre-commit: blocked. Review the lines above, remove the personal data, and re-stage."
     echo "If this is a false positive, bypass once with: ALLOW_PERSONAL_DATA=1 git commit ..."
