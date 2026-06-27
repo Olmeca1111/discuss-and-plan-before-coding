@@ -1,0 +1,69 @@
+#!/bin/sh
+# Pre-commit guard against accidentally committing personal data into this
+# (public) skill repo. Scans only the lines being *added* in this commit.
+#
+# This is a mechanical backstop, not a replacement for the privacy rule in
+# SKILL.md — it catches common patterns (emails, home-directory paths, secret-
+# looking assignments), not every possible leak. It will not catch a real
+# project/client name typed as plain prose, for example.
+#
+# To bypass deliberately for a single commit (e.g. a known false positive):
+#   ALLOW_PERSONAL_DATA=1 git commit ...
+
+if [ "$ALLOW_PERSONAL_DATA" = "1" ]; then
+    exit 0
+fi
+
+added_lines=$(git diff --cached -U0 -- . | grep -E '^\+' | grep -Ev '^\+\+\+')
+
+if [ -z "$added_lines" ]; then
+    exit 0
+fi
+
+found=0
+
+check() {
+    label="$1"
+    pattern="$2"
+    extra_flag="$3"
+    matches=$(printf '%s\n' "$added_lines" | grep -nE $extra_flag "$pattern")
+    if [ -n "$matches" ]; then
+        found=1
+        echo "pre-commit: possible $label found in staged changes:"
+        printf '%s\n' "$matches" | sed 's/^/  /'
+        echo
+    fi
+}
+
+# Email addresses
+check "email address" '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+
+# Home-directory paths containing a username (Windows / macOS / Linux)
+check "home-directory path with a username" '([A-Za-z]:\\Users\\[^\\"'"'"' ]+|/Users/[^/"'"'"' ]+|/home/[^/"'"'"' ]+)'
+
+# Secret-looking assignments (api_key=, token=, password=, secret=, etc.)
+check "secret-looking assignment" '(api[_-]?key|secret|token|password|passwd|access[_-]?key)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9/+_-]{8,}' '-i'
+
+# AWS access key id pattern
+check "AWS access key" 'AKIA[0-9A-Z]{16}'
+
+# This skill's own "Seen on:" lessons field should be a count, e.g.
+# "Seen on: 3 distinct projects" — flag anything else (real project names).
+seen_on_lines=$(printf '%s\n' "$added_lines" | grep -nE 'Seen on:')
+if [ -n "$seen_on_lines" ]; then
+    bad_seen_on=$(printf '%s\n' "$seen_on_lines" | grep -Ev 'Seen on:[[:space:]]*[0-9]+[[:space:]]+distinct[[:space:]]+projects')
+    if [ -n "$bad_seen_on" ]; then
+        found=1
+        echo "pre-commit: 'Seen on:' line doesn't look like '<N> distinct projects' (should be a count, not names — see SKILL.md privacy rule):"
+        printf '%s\n' "$bad_seen_on" | sed 's/^/  /'
+        echo
+    fi
+fi
+
+if [ "$found" -eq 1 ]; then
+    echo "pre-commit: blocked. Review the lines above, remove the personal data, and re-stage."
+    echo "If this is a false positive, bypass once with: ALLOW_PERSONAL_DATA=1 git commit ..."
+    exit 1
+fi
+
+exit 0

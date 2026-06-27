@@ -26,7 +26,7 @@ This matters for two reasons:
 1. Claude Code only discovers skills under `~/.claude/skills/` (user scope) or a project's local `.claude/skills/`.
 2. The self-improvement mechanism (see `SKILL.md`) accumulates lessons in `references/lessons-learned.md` *across* projects. A project-scoped copy resets that memory every time you start a new repo, so install it globally to let it actually learn over time.
 
-After installing, restart Claude Code (or start a new session) so it picks up the skill.
+After installing, restart Claude Code (or start a new session) so it picks up the skill. If you plan to use the self-improvement mechanism (you almost certainly will, since it's automatic), also enable the pre-commit hook described below — it's the main safety net against accidentally pushing personal data.
 
 ## Repo layout
 
@@ -58,6 +58,22 @@ If you ever want to deliberately commit a change to it (e.g. contribute a lesson
 git update-index --no-skip-worktree references/lessons-learned.md
 # commit your change
 git update-index --skip-worktree references/lessons-learned.md   # re-enable afterward
+```
+
+## Pre-commit hook: catching accidental personal data
+
+`SKILL.md` has a rule telling Claude never to write real project/client/account names into `references/lessons-learned.md` (see "Privacy" in `SKILL.md`). That rule only constrains Claude's behavior, though — it won't stop a human from typing something personal by hand, or from missing it during review. As a mechanical backstop that runs regardless of who's committing, this repo ships a pre-commit hook (`hooks/pre-commit`) that scans the lines you're about to commit for common patterns: email addresses, home-directory paths with a username, secret/API-key-looking assignments, and `Seen on:` lines that contain real names instead of a plain count.
+
+Enable it once per clone:
+
+```sh
+git config core.hooksPath hooks
+```
+
+After that, any `git commit` that adds a matching line is blocked with the offending lines printed out, so you can fix them before they ever reach `git push`. It's a pattern scanner, not a guarantee — it won't catch, say, a real client name typed as plain prose with no surrounding marker. If you hit a false positive, bypass that one commit with:
+
+```sh
+ALLOW_PERSONAL_DATA=1 git commit ...
 ```
 
 ## Feedback
