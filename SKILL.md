@@ -148,6 +148,8 @@ If the user approves, append the lesson to `references/lessons-learned.md` and l
 ### Privacy: keep identifying details out of the lessons file
 `references/lessons-learned.md` is the one file in this skill that's designed to be shared or published (e.g. if you ever publish your fork of this skill). Never write real project names, client names, account names, repo URLs, or other identifying details into it — describe the pattern itself plus a generic descriptor of the context if useful ("a browser extension", "a data pipeline"), not who it was for. This applies to every lesson and to the "Seen on" counter below. If a lesson is genuinely inseparable from private specifics, it belongs in that project's `CLAUDE.md` instead, not here.
 
+If this skill's repo has a `hooks/pre-commit` privacy guard installed (see the repo's README) and a commit gets blocked by it, that block is a deliberate safety gate, not an error to route around. Never set `ALLOW_PERSONAL_DATA=1` (or otherwise bypass the hook) on your own initiative to push a commit through — stop, show the user exactly what the hook flagged, and let the *human* decide whether it's a false positive worth bypassing. This holds even (especially) when operating autonomously without per-commit review.
+
 ### Lesson format and the promotion counter
 Each lesson records how many *distinct* projects it has appeared on, so promotion later is mechanical rather than a matter of taste. Track this as a count only — never list real project names (see "Privacy" above):
 

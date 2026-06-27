@@ -11,6 +11,9 @@ Format:
 ```
 
 ## 2026-06-27
+- core: added a rule that Claude must never self-bypass the repo's pre-commit privacy
+  hook (e.g. via `ALLOW_PERSONAL_DATA=1`) — a block is a human decision, even when
+  operating autonomously (approved by user).
 - core: added a privacy rule to the self-improvement mechanism — lessons must never
   record real project/client/account names; the "Seen on" field tracks a count only,
   not a list of named projects (approved by user).
