@@ -1,0 +1,6 @@
+# Personal lessons accumulated locally — not meant to be published/shared
+references/lessons-learned.md
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
