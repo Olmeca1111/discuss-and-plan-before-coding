@@ -10,8 +10,11 @@ SKILL.md) means they cost nothing until something actually opens this file.
   approach a future, *unrelated* project. Project-specific quirks go in that
   project's `CLAUDE.md`, not here. (See the "methodology filter" in SKILL.md.)
 - Nothing is added without an explicit user "yes" to a `🔧 SKILL IMPROVEMENT PROPOSAL`.
-- On adding a lesson that already exists, don't duplicate — add the project to its
-  "Seen on" list and increment the count.
+- **No identifying details.** Never write real project names, client names, account
+  names, repo URLs, or similar into this file — this is the one file in the skill
+  meant to be shared/published. Describe the pattern and, if useful, a generic
+  descriptor of the context ("a browser extension"), never who it was for.
+- On adding a lesson that already exists, don't duplicate — just increment its count.
 - A lesson promoted into SKILL.md (after 3+ distinct projects) stays here marked
   `Status: promoted`, so the history is preserved.
 - Prune at the Phase 7 retrospective: collapse duplicates, drop the obsolete, keep
@@ -21,7 +24,7 @@ SKILL.md) means they cost nothing until something actually opens this file.
 ```
 ### <short lesson title>
 - Pattern: <the method>
-- Seen on: <project-a>, <project-b>   (count: 2)
+- Seen on: <N> distinct projects
 - Status: lesson | promoted
 ```
 

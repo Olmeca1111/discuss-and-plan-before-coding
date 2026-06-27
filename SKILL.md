@@ -145,17 +145,20 @@ Proposed text: <the exact lines to add to references/lessons-learned.md>
 
 If the user approves, append the lesson to `references/lessons-learned.md` and log it in `CHANGELOG.md`. If the user declines, drop it. Never edit `SKILL.md` or the lessons file without an explicit yes.
 
+### Privacy: keep identifying details out of the lessons file
+`references/lessons-learned.md` is the one file in this skill that's designed to be shared or published (e.g. if you ever publish your fork of this skill). Never write real project names, client names, account names, repo URLs, or other identifying details into it — describe the pattern itself plus a generic descriptor of the context if useful ("a browser extension", "a data pipeline"), not who it was for. This applies to every lesson and to the "Seen on" counter below. If a lesson is genuinely inseparable from private specifics, it belongs in that project's `CLAUDE.md` instead, not here.
+
 ### Lesson format and the promotion counter
-Each lesson records how many *distinct* projects it has appeared on, so promotion later is mechanical rather than a matter of taste:
+Each lesson records how many *distinct* projects it has appeared on, so promotion later is mechanical rather than a matter of taste. Track this as a count only — never list real project names (see "Privacy" above):
 
 ```
 ### <short lesson title>
 - Pattern: <the method>
-- Seen on: <project-a>, <project-b>   (count: 2)
+- Seen on: <N> distinct projects
 - Status: lesson | promoted
 ```
 
-When you would add a lesson that already exists, don't duplicate it — add the new project to its list and increment the count (dedup on add).
+When you would add a lesson that already exists, don't duplicate it — just increment the count (dedup on add).
 
 ### Promotion to the core
 A lesson earns promotion into `SKILL.md` only once it has appeared on **3 or more distinct projects** and is clearly load-bearing for the methodology. Promotion is itself a forked decision: propose it, get approval, move the text into the appropriate phase of the core, mark the lesson `promoted` in the lessons file, and log it in `CHANGELOG.md`. Promote sparingly — every promotion permanently grows the always-loaded core.

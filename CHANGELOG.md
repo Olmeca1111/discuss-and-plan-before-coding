@@ -11,4 +11,7 @@ Format:
 ```
 
 ## 2026-06-27
+- core: added a privacy rule to the self-improvement mechanism — lessons must never
+  record real project/client/account names; the "Seen on" field tracks a count only,
+  not a list of named projects (approved by user).
 - core: initial version — discovery-and-planning workflow with self-improvement mechanism.
